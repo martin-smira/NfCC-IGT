@@ -1,0 +1,31 @@
+identifikovat spatnou konvergenci (shinystan)
+ -> 2nd longer (better) run   -  stejny pocet vyslednych iteraci (zvednout warmup, thinning)
+     -> stel nevyhovujici subjekty (asi) odstranit
+
+
+RELI 
+ par_A = 0.735
+ par_w = 0.846
+ par_a = 0.885
+ par_c = 0.868
+
+
+porovnat aktualni samply se starymi
+ceknout nastaveni vzorkovace pri "asi spatnych" retezcich
+
+
+spatni subjs 
+   -  nekteri asi zkonverguji, ale az po delsim case
+   - dalsi vubec  
+       -  proc? Model neodpovida jejich chovani? (jiny model?)  
+   		- ale i tak by mohli byt uz uzitecni ve skupinovem odhadu (pokud nenarusuji predchozi bod)
+
+subj. se sirokymi odhady
+  - asi taky dobre nesedi na model?
+  - rozsireni rozsahu parametru? 
+  - jiny model?
+
+
+Ceknout
+----------
+what if lp__ didnt converge (Rhat = 2.5)

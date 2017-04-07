@@ -49,4 +49,7 @@ Temporary Items
 # Data - samples
 *.Rdata
 
+# Rproject files
+.Rproj.user
+.Rhistory
 

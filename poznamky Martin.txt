@@ -14,18 +14,25 @@ porovnat aktualni samply se starymi
 ceknout nastaveni vzorkovace pri "asi spatnych" retezcich
 
 
-spatni subjs 
+Spatni subjs 
    -  nekteri asi zkonverguji, ale az po delsim case
    - dalsi vubec  
        -  proc? Model neodpovida jejich chovani? (jiny model?)  
    		- ale i tak by mohli byt uz uzitecni ve skupinovem odhadu (pokud nenarusuji predchozi bod)
 
-subj. se sirokymi odhady
+Subj. se sirokymi odhady
   - asi taky dobre nesedi na model?
   - rozsireni rozsahu parametru? 
   - jiny model?
 
 
+Zkusit odhady jen z prvnich 100 trialu
+  -  pak srovnat s 200 t
+
+
+
+
 Ceknout
 ----------
 what if lp__ didnt converge (Rhat = 2.5)
+porovnat stare samples s novymi 

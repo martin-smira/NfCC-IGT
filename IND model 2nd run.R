@@ -24,7 +24,7 @@ test3 <- which(rHats > 1.1)
 badParameters <- unique(names(c(test1, test2, test3)))
 
 # Extract subject numbers
-tmp1 <- stringr::str_match(test, "\\w+\\[(\\d+)\\]")[,2]
+tmp1 <- stringr::str_match(badParameters, "\\w+\\[(\\d+)\\]")[,2]
 tmp2 <- as.numeric(unique(tmp1))
 
 badSubjs <- sort(tmp2[-length(tmp2)])
@@ -36,7 +36,7 @@ iow6 <- read.csv2("data/IOWA2016trials.csv")
 # Merge and prepare data
 data <- tbl_df(bind_rows(iow5, iow6) %>%
   select(ID, trial, deck, difference) %>%
-  mutate(ID2 = rep(1:length(unique(ID)), each = max(data$trial)),
+  mutate(ID2 = rep(1:length(unique(ID)), each = max(trial)),
          deck = as.numeric(deck),
          difference = difference / 1000) %>%
   arrange(ID, trial))
@@ -45,11 +45,11 @@ data <- tbl_df(bind_rows(iow5, iow6) %>%
 subData <- data %>%
   filter(ID2 %in% badSubjs)
 
-nSubjs <- length(unique(data$ID))
-nTrials <- max(data$trial)
+nSubjs <- length(unique(subData$ID))
+nTrials <- max(subData$trial)
 
-choice <- matrix(data$deck, nSubjs, nTrials, byrow = TRUE)  # Deck selections
-net <- matrix(data$difference, nSubjs, nTrials, byrow = TRUE)  # Net outcomes
+choice <- matrix(subData$deck, nSubjs, nTrials, byrow = TRUE)  # Deck selections
+net <- matrix(subData$difference, nSubjs, nTrials, byrow = TRUE)  # Net outcomes
 
 # Input data for the model
 mydata <- list(choice = choice, n_s = nSubjs, n_t = nTrials, net = net)
@@ -64,7 +64,7 @@ mypars <- c("A_ind", "w_ind", "a_ind", "c_ind")
 #### Model run ####
 
 # Compile the model (if not already complied)
-stan_mod <- stan_model('pvl_d_IND_1g.stan')
+stan_mod <- stan_model('models/pvl_d_IND_1g.stan')
 
 start = Sys.time()
 # Run iterations; output data is saved in object "samples"

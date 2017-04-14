@@ -23,29 +23,26 @@ model {
     vector[4] Ev;
     real theta;
     
-    theta <- 3 ^ c_ind[s] - 1;     
+    theta = 3 ^ c_ind[s] - 1;     
    
     // Assign 0 to all elements of Ev
-    Ev <- rep_vector(0, 4);
+    Ev = rep_vector(0, 4);
     
     for (t in 1:(n_t - 1)) {
       real v;
       int currentDeck;
       
-      currentDeck <- choice[s,t];
+      currentDeck = choice[s,t];
      
       if (net[s,t] >= 0)
-        v <- net[s,t] ^ A_ind[s];
+        v = net[s,t] ^ A_ind[s];
       else
-        v <- -w_ind[s] * fabs(net[s,t]) ^ A_ind[s];
+        v = -w_ind[s] * fabs(net[s,t]) ^ A_ind[s];
 
       // If one of the decks is depleted 
-      Ev[currentDeck] <- (1 - a_ind[s]) * Ev[choice[s,t]] + a_ind[s] * v;  
+      Ev[currentDeck] = (1 - a_ind[s]) * Ev[choice[s,t]] + a_ind[s] * v;  
 
       choice[s,t+1] ~ categorical_logit(Ev * theta); 
     }
   }
 }
-
-
-

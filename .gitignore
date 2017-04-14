@@ -49,7 +49,11 @@ Temporary Items
 # Data - samples
 *.Rdata
 
+# Compiled Stan models
+*.rds
+
 # Rproject files
 .Rproj.user
+*.Rproj
 .Rhistory
 

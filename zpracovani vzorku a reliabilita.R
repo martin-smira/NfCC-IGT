@@ -3,9 +3,9 @@ library(rstan)
 # library(bayesplot)
 
 
-setwd("D:/Dropbox/Analýzy/Iowa kognitivní modely/verze1")
+setwd("D:/Dropbox/Dokumenty/Projekty/IOWA GAMBLING TASK/NfCC-IGT")
 
-load("Samples/IND_samples_1st_run.Rdata")
+load("samples/IND_samples_1st_run.Rdata")
 
 print(samples)
 
@@ -15,11 +15,6 @@ print(get_elapsed_time(samples) / 3600)
 ## ShinyStan
 shinyStanSamples <- as.shinystan(samples)
 launch_shinystan(shinyStanSamples)
-
-# rsconnect::setAccountInfo(name='neekro',
-#                           token='27057604BD231C5FABE9ABDD832C98A5',
-#                           secret='Es5L8aCo5sLYNZs9tSfR1mdI+V/0j3q/WfkFWXq1')
-# deploy_shinystan(shinyStanSamples, "xxxxxxx")
 
 
 samplesSum <- summary(samples)$summary
@@ -53,17 +48,10 @@ reli <- numeric(nReliSamples)
 for (i in 1:nReliSamples) {
   randomTwoSamples <- sample(1:nSamples, 2)
   
-  # if (abs(randomTwoSamples[1] - randomTwoSamples[2]) < 5000) {  # didn't affcet
-  #   reli[i] <- NA
-  #   
-  # } else {
-    par1 <- samplesX[[parameterChoice]][randomTwoSamples[1], rHatPassedNum]
-    par2 <- samplesX[[parameterChoice]][randomTwoSamples[2], rHatPassedNum]
-    
-    reli[i] = cor.test(par1, par2)$estimate  
-  # }
+  par1 <- samplesX[[parameterChoice]][randomTwoSamples[1], rHatPassedNum]
+  par2 <- samplesX[[parameterChoice]][randomTwoSamples[2], rHatPassedNum]
   
-  
+  reli[i] = cor.test(par1, par2)$estimate  
 }
 
 summary(reli)

@@ -10,8 +10,6 @@ data {
   real<lower=-35,upper=2> net[n_s, n_t];  // Net amount of wins + losses    
                                           // (# subj. x # trials matrix) 
   vector<lower=0,upper=1>[4] mix;         // Prior mixing proportion for each z  
-  int<lower=0,upper=1> human_choice[n_s, n_t];
-  int<lower=0,upper=999> n_cards;  // Number of cards in a deck
 }
 
 parameters {
@@ -39,9 +37,9 @@ transformed parameters {
   }
   
   for (i in 1:4) {
-    lp_parts[i,1] = log(mix[i]) + normal_log(tail(ind_pr[i], n_s_2),
+    lp_parts[i,1] = log(mix[i]) + normal_lpdf(tail(ind_pr[i], n_s_2) |   // presunout tail do promenne, at se nemus selektovat 2x
                                                mu_pr[i,1], std[i]);
-    lp_parts[i,2] = log1m(mix[i]) + normal_log(tail(ind_pr[i], n_s_2),
+    lp_parts[i,2] = log1m(mix[i]) + normal_lpdf(tail(ind_pr[i], n_s_2) |
                                                  mu_pr[i,2], std[i]);
   }
 }
@@ -58,7 +56,7 @@ model {
       ind_pr[i,s] ~ normal(mu_pr[i,1], std[i]);      
   // Group 2 
   for (i in 1:4)  
-    increment_log_prob(log_sum_exp(lp_parts[i]));
+    target += log_sum_exp(lp_parts[i]);
   
   for (s in 1:n_s) {  // loop over subjects
     vector[4] p;
@@ -87,12 +85,9 @@ model {
       else
         v = -w_ind[s] * fabs(net[s,t]) ^ A_ind[s];
 
-      // If one of the decks is depleted 
-      Ev[currentDeck] = if_else(drawCount[currentDeck] == n_cards, -999999,
-                                 (1 - a_ind[s]) * Ev[choice[s,t]] + a_ind[s] * v);  
+      Ev[currentDeck] = (1 - a_ind[s]) * Ev[choice[s,t]] + a_ind[s] * v;  
 
-      if (human_choice[s,t+1] == 1)
-        choice[s,t+1] ~ categorical_logit(Ev * theta); 
+      choice[s,t+1] ~ categorical_logit(Ev * theta); 
     }
   }
 }

@@ -36,10 +36,10 @@ iow6 <- read.csv2("data/IOWA2016trials.csv")
 # Merge and prepare data
 data <- tbl_df(bind_rows(iow5, iow6) %>%
   select(ID, trial, deck, difference) %>%
+  arrange(ID, trial)) %>%
   mutate(ID2 = rep(1:length(unique(ID)), each = max(trial)),
          deck = as.numeric(deck),
-         difference = difference / 1000) %>%
-  arrange(ID, trial))
+         difference = difference / 1000) 
 
 # Subset bad subjects
 subData <- data %>%

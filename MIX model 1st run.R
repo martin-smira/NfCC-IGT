@@ -3,11 +3,13 @@ rm(list = ls())
 library(rstan) 
 library(dplyr)
 
-# SPECIFY prior mixing proportion (higher value favours different group dist.)
-mix <- c(.5, .5, .5, .5) 
+setwd("D:/Dropbox/Dokumenty/Projekty/IOWA GAMBLING TASK/NfCC-IGT")
 
 iow5 <- read.csv2("data/IOWA2015trials.csv")
 iow6 <- read.csv2("data/IOWA2016trials.csv")
+
+# specify prior mixing proportion (higher value favours different group dist.)
+mix <- c(.5, .5, .5, .5) 
 
 # Merge and prepare data
 data <- bind_rows(iow5, iow6)
@@ -64,7 +66,7 @@ samples <- sampling(stan_mod, data = mydata, init = "random", pars = mypars,
 
 print(samples, digits = 3)      
 # windows(20,1); traceplot(samples, ask=TRUE)
-# save(samples, file="Samples/4-z_samples_1st_run.Rdata")
+save(samples, file = "samples/4-z_samples_1st_run.Rdata")
 
 ############# Testing Z proportions ##################################
 extractedSamples <- extract(samples)

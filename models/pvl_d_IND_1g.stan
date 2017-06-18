@@ -30,9 +30,6 @@ model {
     
     for (t in 1:(n_t - 1)) {
       real v;
-      int currentDeck;
-      
-      currentDeck = choice[s,t];
      
       if (net[s,t] >= 0)
         v = net[s,t] ^ A_ind[s];
@@ -40,7 +37,7 @@ model {
         v = -w_ind[s] * fabs(net[s,t]) ^ A_ind[s];
 
       // If one of the decks is depleted 
-      Ev[currentDeck] = (1 - a_ind[s]) * Ev[choice[s,t]] + a_ind[s] * v;  
+      Ev[choice[s,t]] = (1 - a_ind[s]) * Ev[choice[s,t]] + a_ind[s] * v;  
 
       choice[s,t+1] ~ categorical_logit(Ev * theta); 
     }

@@ -62,17 +62,12 @@ options(mc.cores = parallel::detectCores() - 2) ## Hynek: minus 2 instead minus 
 mypars <- c("A_ind", "w_ind", "a_ind", "c_ind")
 
 #### Model run ####
-
 # Compile the model (if not already complied)
 stan_mod <- stan_model('models/pvl_d_IND_1g.stan')
 
-start = Sys.time()
 # Run iterations; output data is saved in object "samples"
 samples <- sampling(stan_mod, data = mydata, init = "random", pars = mypars,
                 warmup = 20000, iter = 40000, thin = 4, chains = 10)
-
-end = Sys.time()
-end - start   # run time
 
 print(samples, digits=3)
 # windows(20,1); traceplot(samples, ask=TRUE)

@@ -43,13 +43,9 @@ mypars <- c("A_ind", "w_ind", "a_ind", "c_ind")
 # Compile the model (if not already complied)
 stan_mod <- stan_model('models/pvl_d_IND_1g.stan')
 
-start = Sys.time()
 # Run iterations; output data is saved in object "samples"
 samples <- sampling(stan_mod, data = mydata, init = "random", pars = mypars,
                 warmup = 2000, iter = 12000, thin = 2, chains = 10)
-
-end = Sys.time()
-end - start   # run time
 
 print(samples, digits=3)
 # windows(20,1); traceplot(samples, ask=TRUE)

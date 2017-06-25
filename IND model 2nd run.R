@@ -7,45 +7,27 @@ setwd("D:/Dropbox/Dokumenty/Projekty/IOWA GAMBLING TASK/NfCC-IGT")
 ## Identify "bad" subjects from previous run
 load("samples/IND_samples_1st_run.Rdata")
 
-samplesSum <- summary(samples)$summary
-
-nSamples <- nrow(extract(samples)[[1]])  # pocet vzorku
-
-SDs <- samplesSum[, "sd"]
-SEs <- samplesSum[, "se_mean"]
-rHats <- samplesSum[, "Rhat"]
-nEffs <- samplesSum[, "n_eff"]
-
-
-test1 <- which((nEffs / nSamples) < 0.1)
-test2 <- which((SEs / SDs) > 0.1)
-test3 <- which(rHats > 1.1)
-
-badParameters <- unique(names(c(test1, test2, test3)))
-
-# Extract subject numbers
-tmp1 <- stringr::str_match(badParameters, "\\w+\\[(\\d+)\\]")[,2]
-tmp2 <- as.numeric(unique(tmp1))
-
-badSubjs <- sort(tmp2[-length(tmp2)])
+source("fun_ConvergenceCheck.R")
+badSubjs <- ConvergenceCheck(samples, .1, .1, 1.1)$badSubjs
 
 ## Read data
-iow5 <- read.csv2("data/IOWA2015trials.csv")
-iow6 <- read.csv2("data/IOWA2016trials.csv")
+iow5 <- read_csv2("data/IOWA2015trials.csv")
+iow6 <- read_csv2("data/IOWA2016trials.csv")
+tbl_id_mapping <- read_csv("data/id_mapping.csv")
 
 # Merge and prepare data
-data <- tbl_df(bind_rows(iow5, iow6) %>%
-  select(ID, trial, deck, difference) %>%
-  arrange(ID, trial)) %>%
-  mutate(ID2 = rep(1:length(unique(ID)), each = max(trial)),
-         deck = as.numeric(deck),
+data <- bind_rows(iow5, iow6) %>%
+  left_join(tbl_id_mapping, by = c("ID" = "ID_original")) %>% 
+  select(ID_new, trial, deck, difference) %>%
+  arrange(ID_new, trial) %>%
+  mutate(deck = match(deck, LETTERS),
          difference = difference / 1000) 
 
 # Subset bad subjects
 subData <- data %>%
-  filter(ID2 %in% badSubjs)
+  filter(ID_new %in% badSubjs)
 
-nSubjs <- length(unique(subData$ID))
+nSubjs <- length(unique(subData$ID_new))
 nTrials <- max(subData$trial)
 
 choice <- matrix(subData$deck, nSubjs, nTrials, byrow = TRUE)  # Deck selections

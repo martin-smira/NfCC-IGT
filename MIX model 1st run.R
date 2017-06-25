@@ -5,24 +5,24 @@ library(dplyr)
 
 setwd("D:/Dropbox/Dokumenty/Projekty/IOWA GAMBLING TASK/NfCC-IGT")
 
-iow5 <- read.csv2("data/IOWA2015trials.csv")
-iow6 <- read.csv2("data/IOWA2016trials.csv")
-
-# specify prior mixing proportion (higher value favours different group dist.)
-mix <- c(.5, .5, .5, .5) 
+iow5 <- read_csv2("data/IOWA2015trials.csv")
+iow6 <- read_csv2("data/IOWA2016trials.csv")
 
 # Merge and prepare data
-data <- bind_rows(iow5, iow6)
-data <- tbl_df(data)
-
-data <- data %>%
+data <- bind_rows(iow5, iow6) %>%
   select(ID, trial, deck, difference, nfcc) %>%
   filter(!is.na(nfcc)) %>%
-  mutate(deck = as.numeric(deck),
+  mutate(deck = match(deck, LETTERS),
          difference = difference / 1000) %>%
   # top_n(200 * 10, ID) %>% 
   arrange(ID, trial)
 
+# Create ID mapping/conversion table for later use  
+unqId <- unique(data$ID)
+df_id_map <- data.frame(ID_original = unqId, ID_new = 1:length(unqId))
+write.csv(df_id_map, "data/id_mapping.csv", row.names = FALSE)
+
+# Continue
 dataC <- data %>% 
   filter(nfcc == 0)
 
@@ -62,11 +62,11 @@ stan_mod <- stan_model('models/pvl_d_mix_all_1-std.stan')
 
 # Run iterations; output data is saved in object "sampels"
 samples <- sampling(stan_mod, data = mydata, init = "random", pars = mypars, 
-                warmup = 200, iter = 1200, thin = 1, chains = 6)
+                warmup = 500, iter = 5500, thin = 1, chains = 6)
 
 print(samples, digits = 3)      
 # windows(20,1); traceplot(samples, ask=TRUE)
-save(samples, file = "samples/4-z_samples_1st_run.Rdata")
+save(samples, file = "samples/4-z_samples_3rd_run.Rdata")
 
 ############# Testing Z proportions ##################################
 extractedSamples <- extract(samples)
